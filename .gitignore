@@ -1,0 +1,16 @@
+# Backend
+backend/venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/.env
+backend/data/raw_docs/*
+backend/data/vector_store/*
+backend/data/app.db
+backend/data/ingested_manifest.json
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+
+.DS_Store

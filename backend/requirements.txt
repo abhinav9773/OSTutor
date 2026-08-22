@@ -1,0 +1,37 @@
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+python-multipart==0.0.9
+pydantic==2.9.2
+pydantic-settings==2.5.2
+
+# Document parsing
+pymupdf==1.24.10
+python-docx==1.1.2
+
+# Web page ingestion
+requests==2.32.3
+beautifulsoup4==4.12.3
+
+# Chunking / orchestration
+langchain==0.3.1
+langchain-text-splitters==0.3.0
+
+# Embeddings (local, free)
+sentence-transformers==3.1.1
+
+# Vector store
+chromadb==0.5.5
+
+# LLM via Groq (1.x required - 0.11.0 conflicts with modern httpx's dropped
+# 'proxies' argument, which causes a TypeError on client init)
+groq==1.5.0
+
+python-dotenv==1.0.1
+
+# Auth
+google-auth==2.35.0
+pyjwt==2.9.0
+
+# Chat history storage
+sqlalchemy==2.0.35
+psycopg2-binary==2.9.9
