@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
+from config import settings
 from database import Base, engine
 from routes import chat, ingest, auth, chats
 
@@ -10,7 +10,7 @@ app = FastAPI(title="OS RAG Tutor API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=settings.allowed_origins_list,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

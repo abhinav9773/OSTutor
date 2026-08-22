@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Sparkles, FileText, MessageSquare, Cpu } from "lucide-react";
 import TerminalTyper from "./TerminalTyper.jsx";
+import { BASE_URL } from "../api.js";
 import Logo from "./Logo.jsx";
 
 // Module-level flag (not component state) - survives re-renders and
@@ -20,7 +21,7 @@ export default function Login({ onLoginSuccess }) {
         client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
         callback: async (response) => {
           try {
-            const res = await fetch("http://localhost:8000/auth/google", {
+            const res = await fetch(`${BASE_URL}/auth/google`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ credential: response.credential }),
