@@ -16,8 +16,12 @@ beautifulsoup4==4.12.3
 langchain==0.3.1
 langchain-text-splitters==0.3.0
 
-# Embeddings (local, free)
-sentence-transformers==3.1.1
+# Embeddings - fastembed (ONNX-based) instead of sentence-transformers.
+# sentence-transformers pulls in full PyTorch (~400-800MB RAM just to
+# load), which OOMs on Render's free 512MB tier. fastembed uses ONNX
+# Runtime for the same MiniLM-family models with a much smaller
+# footprint and no PyTorch dependency at all.
+fastembed==0.4.2
 
 # Vector store
 chromadb==0.5.5

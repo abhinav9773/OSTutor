@@ -12,7 +12,7 @@ PROJECT_DIR = BASE_DIR.parent
 class Settings(BaseSettings):
     groq_api_key: str = ""
     llm_model: str = "openai/gpt-oss-120b"
-    embedding_model: str = "all-MiniLM-L6-v2"
+    embedding_model: str = "BAAI/bge-small-en-v1.5"
 
     chunk_size: int = 500
     chunk_overlap: int = 50
