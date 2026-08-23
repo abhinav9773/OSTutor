@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Sparkles, FileText, MessageSquare, Cpu } from "lucide-react";
 import TerminalTyper from "./TerminalTyper.jsx";
-import { BASE_URL } from "../api.js";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 import Logo from "./Logo.jsx";
 
 // Module-level flag (not component state) - survives re-renders and
