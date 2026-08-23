@@ -1,15 +1,19 @@
 """
-FastAPI dependency that reads the "Authorization: Bearer <token>" header,
-verifies it was signed by us (issued at login time in routes/auth.py),
-and returns the user info encoded inside it.
+FastAPI dependencies for authentication and authorization.
 
-This is what makes chat history actually secure per-user — a request
-can only ever read/write chats belonging to the "sub" inside its own
-valid token, never someone else's, and never just by passing a raw ID.
+get_current_user verifies the "Authorization: Bearer <token>" header
+(the JWT issued at login time in routes/auth.py) and returns the user
+info encoded inside it - this is what makes chat history secure per-user.
+
+require_admin builds on top of that: it only allows through users whose
+email is in ADMIN_EMAILS. Used to lock down document/URL ingestion so a
+random signed-in user can't upload arbitrary files or flood the
+knowledge base - anyone else gets a clean 403, even if they call the
+API directly and bypass the UI entirely.
 """
 
 import jwt
-from fastapi import Header, HTTPException
+from fastapi import Header, HTTPException, Depends
 
 from config import settings
 
@@ -33,3 +37,10 @@ def get_current_user(authorization: str = Header(None)):
         "name": payload.get("name"),
         "picture": payload.get("picture"),
     }
+
+
+def require_admin(user: dict = Depends(get_current_user)) -> dict:
+    email = (user.get("email") or "").lower()
+    if email not in settings.admin_emails_list:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    return user

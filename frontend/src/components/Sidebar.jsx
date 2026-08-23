@@ -7,6 +7,7 @@ import {
   MessageSquare,
   LogOut,
   Trash2,
+  Upload,
 } from "lucide-react";
 import Logo from "./Logo.jsx";
 
@@ -22,6 +23,8 @@ export default function Sidebar({
   onGenerateMCQs,
   onGenerateViva,
   onDeleteChatClick,
+  onUploadClick,
+  uploadStatus,
   user,
   onLogoutClick,
 }) {
@@ -97,8 +100,6 @@ export default function Sidebar({
           </div>
           <div className="flex flex-col gap-0.5 overflow-y-auto flex-1 min-h-0">
             {chatsLoading ? (
-              // Skeleton placeholders while the chat list is being fetched.
-              // Avoids the "No chats yet" flash before the real list loads.
               <div className="flex flex-col gap-1.5 px-2.5 py-1">
                 {[0, 1, 2].map((i) => (
                   <div
@@ -139,6 +140,25 @@ export default function Sidebar({
                 </div>
               ))}
           </div>
+
+          {/* Upload button only renders when the parent passes a handler -
+              App.jsx only does that for the admin account, so non-admins
+              simply never see this in the DOM at all. */}
+          {onUploadClick && (
+            <>
+              <button
+                onClick={onUploadClick}
+                className="flex items-center gap-2 text-[12.5px] text-textMuted px-2.5 py-2 rounded-lg hover:bg-panel transition-colors text-left whitespace-nowrap mt-2"
+              >
+                <Upload size={14} /> Upload document
+              </button>
+              {uploadStatus && (
+                <div className="text-[11px] text-textFaint italic px-2.5 pb-1">
+                  {uploadStatus}
+                </div>
+              )}
+            </>
+          )}
 
           <div className="flex flex-col gap-1.5 pt-4 mt-2 border-t border-panelBorder">
             <button

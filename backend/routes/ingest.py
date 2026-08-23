@@ -1,13 +1,14 @@
 import os
 import shutil
 
-from fastapi import APIRouter, UploadFile, File
+from fastapi import APIRouter, UploadFile, File, Depends
 from pydantic import BaseModel
 
 from config import settings
 from ingestion.loader import load_pdf, load_docx, load_url
 from ingestion.chunker import chunk_pages
 from retrieval.vector_store import add_chunks, list_sources
+from auth_deps import require_admin
 
 router = APIRouter(prefix="/ingest", tags=["ingest"])
 
@@ -17,10 +18,13 @@ class UrlIngestRequest(BaseModel):
 
 
 @router.post("/upload")
-async def upload_document(file: UploadFile = File(...)):
+async def upload_document(
+    file: UploadFile = File(...), user: dict = Depends(require_admin)
+):
     """
     Accepts a single PDF/DOCX upload, saves it to disk, then runs the
     full ingestion pipeline: load -> chunk -> embed -> store.
+    Restricted to admin accounts only (see auth_deps.require_admin).
     """
     os.makedirs(settings.raw_docs_dir, exist_ok=True)
     save_path = os.path.join(settings.raw_docs_dir, file.filename)
@@ -46,12 +50,10 @@ async def upload_document(file: UploadFile = File(...)):
 
 
 @router.post("/url")
-def ingest_url(request: UrlIngestRequest):
+def ingest_url(request: UrlIngestRequest, user: dict = Depends(require_admin)):
     """
     Fetches a web page and ingests its text content the same way as an
-    uploaded file - this is how you widen the knowledge base with online
-    material (man pages, GeeksforGeeks articles, OSTEP chapters, etc.)
-    without needing a local PDF at all.
+    uploaded file. Restricted to admin accounts only.
     """
     pages = load_url(request.url)
     if not pages:
@@ -67,10 +69,10 @@ def ingest_url(request: UrlIngestRequest):
 
 
 @router.get("/sources")
-def get_sources():
+def get_sources(user: dict = Depends(require_admin)):
     """
     Lists every distinct source (filename or URL) currently in the
-    knowledge base, with how many chunks came from each - useful for
-    seeing what you've already added before ingesting more.
+    knowledge base, with how many chunks came from each.
+    Restricted to admin accounts only.
     """
     return list_sources()

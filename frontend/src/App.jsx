@@ -13,6 +13,7 @@ import {
   getChatMessages,
   addMessage,
   deleteChat,
+  uploadDocument,
 } from "./api.js";
 
 export default function App() {
@@ -26,6 +27,16 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [chatPendingDelete, setChatPendingDelete] = useState(null);
+  const [uploadStatus, setUploadStatus] = useState(null);
+
+  // Only this email (set via VITE_ADMIN_EMAIL) sees the upload button.
+  // This is a UX convenience only - the real enforcement happens on the
+  // backend (require_admin), so even a non-admin calling the API
+  // directly would still get a 403.
+  const isAdmin =
+    user?.email &&
+    import.meta.env.VITE_ADMIN_EMAIL &&
+    user.email.toLowerCase() === import.meta.env.VITE_ADMIN_EMAIL.toLowerCase();
 
   useEffect(() => {
     const savedToken = localStorage.getItem("auth_token");
@@ -150,9 +161,6 @@ export default function App() {
   const handleSend = async (text) => {
     const chatId = await ensureActiveChat(text);
 
-    // Snapshot the conversation as it stands BEFORE this new question,
-    // so we can send it as history for the model to resolve references
-    // like "that" or "the second one" from earlier in this same chat.
     const priorMessages = (
       chats.find((c) => c.id === chatId)?.messages || []
     ).map((m) => ({ role: m.role, text: m.text }));
@@ -162,8 +170,6 @@ export default function App() {
       console.error("Failed to persist user message:", err),
     );
 
-    // Push an empty placeholder for the assistant's reply, then fill it
-    // in live as chunks arrive - this is what produces the "typing" effect.
     updateChatMessages(chatId, (msgs) => [
       ...msgs,
       { role: "assistant", text: "" },
@@ -268,6 +274,32 @@ export default function App() {
     }
   };
 
+  const handleUploadClick = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".pdf,.docx";
+    input.onchange = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      setUploadStatus(`Uploading ${file.name}...`);
+      try {
+        const result = await uploadDocument(file);
+        if (result.error) {
+          setUploadStatus(`Failed: ${result.error}`);
+        } else {
+          setUploadStatus(
+            `Added ${file.name} (${result.chunks_created} chunks)`,
+          );
+        }
+      } catch (err) {
+        setUploadStatus("Upload failed. Try again.");
+      }
+      setTimeout(() => setUploadStatus(null), 5000);
+    };
+    input.click();
+  };
+
   if (!authChecked) return null;
 
   if (!user) {
@@ -292,6 +324,8 @@ export default function App() {
           onGenerateMCQs={handleGenerateMCQs}
           onGenerateViva={handleGenerateViva}
           onDeleteChatClick={setChatPendingDelete}
+          onUploadClick={isAdmin ? handleUploadClick : undefined}
+          uploadStatus={isAdmin ? uploadStatus : null}
           user={user}
           onLogoutClick={() => setShowLogoutConfirm(true)}
         />

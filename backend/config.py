@@ -30,12 +30,21 @@ class Settings(BaseSettings):
     # ALLOWED_ORIGINS=http://localhost:5173,https://your-app.vercel.app
     allowed_origins: str = "http://localhost:5173"
 
+    # Comma-separated list of email addresses allowed to upload documents
+    # or ingest URLs into the knowledge base. Anyone else gets a 403 -
+    # this is real backend enforcement, not just a hidden UI button.
+    admin_emails: str = ""
+
     class Config:
         env_file = ".env"
 
     @property
     def allowed_origins_list(self) -> list[str]:
         return [origin.strip() for origin in self.allowed_origins.split(",") if origin.strip()]
+
+    @property
+    def admin_emails_list(self) -> list[str]:
+        return [e.strip().lower() for e in self.admin_emails.split(",") if e.strip()]
 
 
 settings = Settings()

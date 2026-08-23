@@ -12,16 +12,9 @@ export async function askQuestion(question, history = []) {
     body: JSON.stringify({ question, history }),
   });
   if (!res.ok) throw new Error("Failed to get an answer");
-  return res.json(); // { answer, sources }
+  return res.json();
 }
 
-/**
- * Streaming version - calls onChunk(text) as each piece arrives from the
- * backend. Now also sends recent conversation history so the model has
- * memory within this chat (can resolve "that", "it", "the second one",
- * etc. from earlier turns). Resolves with the full accumulated text once
- * the stream ends, so callers can persist the complete message.
- */
 export async function askQuestionStream(question, history, onChunk) {
   const res = await fetch(`${BASE_URL}/chat/ask/stream`, {
     method: "POST",
@@ -65,14 +58,35 @@ export async function generateVivaQuestions(topic, numQuestions = 5) {
   return res.json();
 }
 
+// Sends the auth token now, so the backend's require_admin check can
+// verify the caller is allowed to upload - non-admins get a 403.
 export async function uploadDocument(file) {
   const formData = new FormData();
   formData.append("file", file);
   const res = await fetch(`${BASE_URL}/ingest/upload`, {
     method: "POST",
+    headers: { ...authHeaders() },
     body: formData,
   });
   if (!res.ok) throw new Error("Failed to upload document");
+  return res.json();
+}
+
+export async function ingestUrl(url) {
+  const res = await fetch(`${BASE_URL}/ingest/url`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...authHeaders() },
+    body: JSON.stringify({ url }),
+  });
+  if (!res.ok) throw new Error("Failed to ingest URL");
+  return res.json();
+}
+
+export async function getIngestedSources() {
+  const res = await fetch(`${BASE_URL}/ingest/sources`, {
+    headers: { ...authHeaders() },
+  });
+  if (!res.ok) throw new Error("Failed to load sources");
   return res.json();
 }
 
@@ -120,3 +134,5 @@ export async function deleteChat(chatId) {
   if (!res.ok) throw new Error("Failed to delete chat");
   return res.json();
 }
+
+export { BASE_URL };
