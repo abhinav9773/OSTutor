@@ -34,6 +34,7 @@ class Settings(BaseSettings):
     database_url: str = str(
         PROJECT_DIR / "data" / "app.db"
     )
+    allowed_origins: str = "http://localhost:5173"
 
     class Config:
         env_file = BASE_DIR / ".env"
