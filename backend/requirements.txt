@@ -24,7 +24,7 @@ langchain-text-splitters==0.3.0
 fastembed==0.4.2
 
 # Vector store
-chromadb==0.5.5
+chromadb==1.5.9
 
 # LLM via Groq (1.x required - 0.11.0 conflicts with modern httpx's dropped
 # 'proxies' argument, which causes a TypeError on client init)

@@ -17,6 +17,10 @@ class Settings(BaseSettings):
     top_k: int = 4
 
     chroma_persist_dir: str = "./data/vector_store"
+    chroma_api_key: str = ""
+    chroma_tenant: str = ""
+    chroma_database: str = ""
+    
     raw_docs_dir: str = "./data/raw_docs"
 
     google_client_id: str = ""

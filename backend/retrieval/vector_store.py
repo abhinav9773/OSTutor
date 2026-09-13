@@ -4,7 +4,6 @@ underlying vector DB API directly.
 """
 
 import chromadb
-from chromadb.config import Settings as ChromaSettings
 from config import settings
 from ingestion.embedder import embed_texts
 
@@ -16,12 +15,16 @@ COLLECTION_NAME = "os_knowledge_base"
 
 def get_collection():
     global _client, _collection
+
     if _collection is None:
-        _client = chromadb.PersistentClient(
-            path=settings.chroma_persist_dir,
-            settings=ChromaSettings(anonymized_telemetry=False),
+        _client = chromadb.CloudClient(
+            api_key=settings.chroma_api_key,
+            tenant=settings.chroma_tenant,
+            database=settings.chroma_database,
         )
+
         _collection = _client.get_or_create_collection(COLLECTION_NAME)
+
     return _collection
 
 
@@ -34,13 +37,22 @@ def add_chunks(chunks: list[dict]):
         return
 
     collection = get_collection()
+
     texts = [c["text"] for c in chunks]
     embeddings = embed_texts(texts)
 
-    # Use a hash of the text itself in the id so re-ingesting the exact
-    # same content twice doesn't just keep piling up duplicate chunks.
-    ids = [f"{c['source']}-{c.get('page')}-{i}-{hash(c['text']) % 100000}" for i, c in enumerate(chunks)]
-    metadatas = [{"source": c["source"], "page": str(c.get("page"))} for c in chunks]
+    ids = [
+        f"{c['source']}-{c.get('page')}-{i}-{hash(c['text']) % 100000}"
+        for i, c in enumerate(chunks)
+    ]
+
+    metadatas = [
+        {
+            "source": c["source"],
+            "page": str(c.get("page"))
+        }
+        for c in chunks
+    ]
 
     collection.add(
         ids=ids,
@@ -55,6 +67,7 @@ def query_similar(query_text: str, top_k: int | None = None) -> list[dict]:
     Embeds the user's question and retrieves the most similar chunks.
     """
     collection = get_collection()
+
     query_embedding = embed_texts([query_text])[0]
 
     results = collection.query(
@@ -63,31 +76,42 @@ def query_similar(query_text: str, top_k: int | None = None) -> list[dict]:
     )
 
     retrieved = []
+
     docs = results.get("documents", [[]])[0]
     metas = results.get("metadatas", [[]])[0]
+
     for doc, meta in zip(docs, metas):
         retrieved.append(
-            {"text": doc, "source": meta.get("source"), "page": meta.get("page")}
+            {
+                "text": doc,
+                "source": meta.get("source"),
+                "page": meta.get("page"),
+            }
         )
+
     return retrieved
 
 
 def list_sources() -> list[dict]:
     """
     Returns every distinct source currently in the knowledge base along
-    with a chunk count for each - lets you see what's already ingested
-    (files and URLs alike) without guessing.
+    with a chunk count for each.
     """
     collection = get_collection()
+
     all_data = collection.get(include=["metadatas"])
     metadatas = all_data.get("metadatas", [])
 
     counts: dict[str, int] = {}
+
     for meta in metadatas:
         source = meta.get("source", "unknown")
         counts[source] = counts.get(source, 0) + 1
 
     return [
         {"source": source, "chunks": count}
-        for source, count in sorted(counts.items(), key=lambda x: -x[1])
+        for source, count in sorted(
+            counts.items(),
+            key=lambda x: -x[1]
+        )
     ]

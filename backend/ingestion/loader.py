@@ -39,7 +39,6 @@ def load_docx(file_path: str) -> list[dict]:
         return []
     return [{"text": full_text, "source": filename, "page": None}]
 
-
 def load_url(url: str) -> list[dict]:
     """
     Fetches a web page and extracts its main readable text - useful for

@@ -27,7 +27,6 @@ from retrieval.vector_store import add_chunks
 
 MANIFEST_PATH = os.path.join(settings.raw_docs_dir, "..", "ingested_manifest.json")
 
-
 def load_manifest() -> dict:
     if os.path.exists(MANIFEST_PATH):
         with open(MANIFEST_PATH, "r", encoding="utf-8") as f:
