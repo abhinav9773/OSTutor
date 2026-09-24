@@ -10,12 +10,12 @@ export default function ConfirmDialog({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm transition-opacity duration-200 px-4"
       onClick={onCancel}
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-[320px] bg-panel border border-panelBorder rounded-2xl p-6 shadow-2xl animate-[fadeInScale_0.18s_ease-out]"
+        className="w-full max-w-[320px] bg-panel border border-panelBorder rounded-2xl p-6 shadow-2xl animate-[fadeInScale_0.18s_ease-out]"
       >
         <div className="font-display text-lg text-textPrimary mb-2">
           {title}

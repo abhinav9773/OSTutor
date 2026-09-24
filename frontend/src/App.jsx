@@ -23,7 +23,13 @@ export default function App() {
   const [chats, setChats] = useState([]);
   const [chatsLoading, setChatsLoading] = useState(false);
   const [activeChatId, setActiveChatId] = useState(null);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  // On phones, start with just the icon rail rather than the full drawer
+  // covering the chat - the user can still tap to open it. This only
+  // decides the initial value; the toggle button still fully controls
+  // it afterwards on any screen size.
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(
+    () => typeof window !== "undefined" && window.innerWidth < 768,
+  );
   const [loading, setLoading] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [chatPendingDelete, setChatPendingDelete] = useState(null);

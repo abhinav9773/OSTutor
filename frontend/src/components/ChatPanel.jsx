@@ -49,7 +49,7 @@ function InputBar({ input, setInput, handleSend, autoFocus }) {
 function ChatSkeleton() {
   const widths = ["w-1/2", "w-2/3", "w-2/5", "w-1/3"];
   return (
-    <div className="flex-1 flex justify-center h-full min-h-0 px-8">
+    <div className="flex-1 flex justify-center h-full min-h-0 px-4 sm:px-8">
       <div className="flex flex-col h-full min-h-0 w-full max-w-[800px] py-7">
         <div className="flex-1 min-h-0 flex flex-col gap-4 overflow-y-auto pr-1 no-scrollbar">
           {widths.map((w, i) => (
@@ -103,9 +103,9 @@ export default function ChatPanel({
 
   if (isEmpty) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center h-full min-h-0 px-8">
+      <div className="flex-1 flex flex-col items-center justify-center h-full min-h-0 px-4 sm:px-8">
         <div className="w-full max-w-[640px] flex flex-col items-center text-center">
-          <div className="font-display text-[30px] text-textPrimary mb-1.5">
+          <div className="font-display text-[24px] sm:text-[30px] text-textPrimary mb-1.5">
             Good evening, {greetingName}.
           </div>
           <div className="text-textFaint text-sm italic mb-8">
@@ -127,8 +127,8 @@ export default function ChatPanel({
   const lastIndex = messages.length - 1;
 
   return (
-    <div className="flex-1 flex justify-center h-full min-h-0 px-8">
-      <div className="flex flex-col h-full min-h-0 w-full max-w-[800px] py-7">
+    <div className="flex-1 flex justify-center h-full min-h-0 px-4 sm:px-8">
+      <div className="flex flex-col h-full min-h-0 w-full max-w-[800px] py-5 sm:py-7">
         <div
           ref={scrollRef}
           className="flex-1 min-h-0 flex flex-col gap-4 overflow-y-auto pr-1 no-scrollbar"
@@ -138,7 +138,7 @@ export default function ChatPanel({
               return (
                 <div
                   key={i}
-                  className="self-end max-w-[70%] bg-[#171310] border border-panelBorder rounded-[14px_14px_4px_14px] px-4 py-3 text-[15px] leading-relaxed text-[#e8e2d6] whitespace-pre-wrap"
+                  className="self-end max-w-[85%] sm:max-w-[70%] bg-[#171310] border border-panelBorder rounded-[14px_14px_4px_14px] px-4 py-3 text-[15px] leading-relaxed text-[#e8e2d6] whitespace-pre-wrap"
                 >
                   {m.text}
                 </div>
@@ -152,7 +152,7 @@ export default function ChatPanel({
               i === lastIndex && loading && m.text === "";
 
             return (
-              <div key={i} className="flex gap-2.5 max-w-[90%]">
+              <div key={i} className="flex gap-2.5 max-w-full sm:max-w-[90%]">
                 <div
                   className={`w-[14px] h-[14px] rounded-full bg-accent shrink-0 mt-1 ${
                     isStreamingPlaceholder ? "animate-pulse" : ""
