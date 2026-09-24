@@ -313,11 +313,11 @@ export default function App() {
   }
 
   return (
-    <div className="relative flex h-screen overflow-hidden bg-bg text-textPrimary font-body">
+    <div className="relative flex h-[100dvh] min-h-0 overflow-hidden bg-bg text-textPrimary font-body">
       <div className="pointer-events-none absolute -top-28 -right-20 w-[420px] h-[420px] rounded-full bg-[radial-gradient(circle_at_40%_40%,rgba(232,147,95,0.35),rgba(217,122,77,0.12)_45%,transparent_70%)] blur-[10px]" />
       <div className="pointer-events-none absolute top-10 right-14 w-[90px] h-[90px] rounded-full bg-[radial-gradient(circle_at_35%_30%,#f5c396,#e8935f_55%,#b3653a_100%)] shadow-[0_0_60px_10px_rgba(232,147,95,0.25)]" />
 
-      <div className="relative z-10 flex w-full h-full min-h-0">
+      <div className="relative z-10 flex w-full h-full min-h-0 overflow-hidden">
         <Sidebar
           collapsed={sidebarCollapsed}
           onToggleCollapse={() => setSidebarCollapsed((v) => !v)}

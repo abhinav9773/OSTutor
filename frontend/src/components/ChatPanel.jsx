@@ -49,7 +49,7 @@ function InputBar({ input, setInput, handleSend, autoFocus }) {
 function ChatSkeleton() {
   const widths = ["w-1/2", "w-2/3", "w-2/5", "w-1/3"];
   return (
-    <div className="flex-1 flex justify-center h-full min-h-0 px-4 sm:px-8">
+    <div className="flex-1 flex justify-center h-full min-h-0 overflow-hidden px-4 sm:px-8">
       <div className="flex flex-col h-full min-h-0 w-full max-w-[800px] py-7">
         <div className="flex-1 min-h-0 flex flex-col gap-4 overflow-y-auto pr-1 no-scrollbar">
           {widths.map((w, i) => (
@@ -103,12 +103,12 @@ export default function ChatPanel({
 
   if (isEmpty) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center h-full min-h-0 px-4 sm:px-8">
+      <div className="flex-1 flex flex-col items-center justify-center h-full min-h-0 overflow-hidden px-4 sm:px-8">
         <div className="w-full max-w-[640px] flex flex-col items-center text-center">
           <div className="font-display text-[24px] sm:text-[30px] text-textPrimary mb-1.5">
             Good evening, {greetingName}.
           </div>
-          <div className="text-textFaint text-sm italic mb-8">
+          <div className="text-textFaint text-sm italic mb-5 sm:mb-8">
             What's on your mind today?
           </div>
           <div className="w-full">
@@ -128,7 +128,7 @@ export default function ChatPanel({
 
   return (
     <div className="flex-1 flex justify-center h-full min-h-0 px-4 sm:px-8">
-      <div className="flex flex-col h-full min-h-0 w-full max-w-[800px] py-5 sm:py-7">
+      <div className="flex flex-col h-full min-h-0 w-full max-w-[800px] py-3 sm:py-7">
         <div
           ref={scrollRef}
           className="flex-1 min-h-0 flex flex-col gap-4 overflow-y-auto pr-1 no-scrollbar"
@@ -175,7 +175,7 @@ export default function ChatPanel({
           })}
         </div>
 
-        <div className="mt-5">
+        <div className="mt-3 sm:mt-5">
           <InputBar input={input} setInput={setInput} handleSend={handleSend} />
         </div>
       </div>
